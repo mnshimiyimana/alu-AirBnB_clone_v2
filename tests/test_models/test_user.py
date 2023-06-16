@@ -6,7 +6,7 @@ import models
 import MySQLdb
 import unittest
 from datetime import datetime
-from models.base_model import Base, BaseModel
+from models.base_model import Base
 from models.user import User
 from models.engine.db_storage import DBStorage
 from models.engine.file_storage import FileStorage
