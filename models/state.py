@@ -1,34 +1,38 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
+import os
+
 from models.base_model import BaseModel, Base
-# import sqlalchemy modules
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.orderinglist import ordering_list
+from models.city import City
+import models
 
 
 class State(BaseModel, Base):
-
-    """This is the class for State
-    Attributes:
-        name: input name
-    """
-    __tablename__ = "states"
-    # write a code to make BaseModel column order first in the table
+    """ State class """
+    __tablename__ = 'states'
 
     name = Column(String(128), nullable=False)
-    cities = relationship("City", cascade='all, delete, delete-orphan',
-                          backref="state")
-    # write a code to make BaseModel column order first in the table
 
-    @property
-    def cities(self):
-        """getter attribute cities that returns the list of City objects
-        from storage linked to the current State"""
-        from models import storage
-        from models.city import City
-        cities = []
-        for key, value in storage.all(City).items():
-            if value.state_id == self.id:
-                cities.append(value)
-        return cities
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        cities = relationship('City', backref='state',
+                              cascade='all, delete-orphan')
+
+    else:
+        # if os.getenv("HBNB_TYPE_STORAGE") != "db":
+        # @property
+        # def cities(self):
+        #     """ Returns the list of City instances with state_id
+        #     equals to the current State.id. """
+        #     all_cities = list(models.storage.all(City).values())
+        #     return list(filter(lambda city: (city.id == self.id),
+        #     all_cities))
+        # no time to fix
+        @property
+        def cities(self):
+            """ Returns the list of City instances with state_id
+            equals to the current State.id. """
+            return [city for city in models.storage.all(City).values()
+                    if city.state_id == self.id]
+    
