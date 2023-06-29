@@ -1,32 +1,40 @@
 #!/usr/bin/python3
-"""Starts a Flask web application.
-
-The application listens on 0.0.0.0, port 5000.
-Routes:
-    /states_list: HTML page with a list of all State objects in DBStorage.
 """
+    python script that starts a Flask web application
+"""
+
 from models import storage
-from flask import Flask
-from flask import render_template
+from models.state import State
+from flask import Flask, render_template, request, jsonify
+from os import getenv
+
 
 app = Flask(__name__)
 
 
-@app.route("/states_list", strict_slashes=False)
+@app.route('/states_list', strict_slashes=False)
 def states_list():
-    """Displays an HTML page with a list of all State objects in DBStorage.
-
-    States are sorted by name.
     """
-    states = storage.all("State")
-    return render_template("7-states_list.html", states=states)
+        Return: HTML page with list of states
+    """
+    path = '7-states_list.html'
+    states = storage.all(State)
+    """
+        sort State object alphabetically by name
+    """
+    sorted_states = sorted(states.values(), key=lambda state: state.name)
+    return render_template(path, sorted_states=sorted_states)
 
 
 @app.teardown_appcontext
-def teardown(exc):
-    """Remove the current SQLAlchemy session."""
+def app_teardown(arg=None):
+    """
+        Clean-up session
+    """
     storage.close()
 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+if __name__ == '__main__':
+    host = getenv("HBNB_API_HOST", "0.0.0.0")
+    port = getenv("HBNB_API_PORT", "5000")
+    app.run(host=host, port=port, threaded=True)
