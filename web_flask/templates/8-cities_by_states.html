@@ -2,26 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>States and Cities</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cities by States</title>
 </head>
 <body>
-    <h1>States</h1>
-    <ul>
-        {% for state in states %}
-        <li>{{ state.id }}: <b>{{ state.name }}</b>
-            <ul>
-                {% if storage_type == 'db' %}
-                {% for city in state.cities %}
-                <li>{{ city.id }}: <b>{{ city.name }}</b></li>
+   <H1>States</H1>
+        <UL>
+        {% for state in states.values()|sort(attribute="name") %}
+            <LI>{{ state.id }}: <B>{{ state.name }}</B>
+                <UL>
+                {% for city in state.cities|sort(attribute="name") %}
+                    <LI>{{ city.id }}: <B>{{ city.name }}</B></LI>
                 {% endfor %}
-                {% else %}
-                {% for city in state.cities() %}
-                <li>{{ city.id }}: <b>{{ city.name }}</b></li>
-                {% endfor %}
-                {% endif %}
-            </ul>
-        </li>
+                </UL>
+            </LI>
         {% endfor %}
-    </ul>
+        </UL> 
 </body>
 </html>
