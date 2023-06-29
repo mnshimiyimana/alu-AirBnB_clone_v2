@@ -3,9 +3,9 @@
     python script that starts a Flask web application
 """
 
-from models import storage
+from models import storage_engine
 from models.state import State
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request
 from os import getenv
 
 
@@ -18,7 +18,7 @@ def states_list():
         Return: HTML page with list of states
     """
     path = '7-states_list.html'
-    states = storage.all(State)
+    states = storage_engine.all(State)
     """
         sort State object alphabetically by name
     """
@@ -31,7 +31,7 @@ def app_teardown(arg=None):
     """
         Clean-up session
     """
-    storage.close()
+    storage_engine.close()
 
 
 if __name__ == '__main__':
